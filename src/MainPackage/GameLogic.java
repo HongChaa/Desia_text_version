@@ -67,7 +67,7 @@ public class GameLogic {
 		return input;
 	}
 	
-	// (공백 출력하는 방식으로) 콘솔 청소하기
+	// (공백 출력하는 방식으로) 콘솔 비우기
 	public static void clearConsole() {
 		for(int i=0; i<50; i++) {
 			System.out.println();
@@ -81,7 +81,7 @@ public class GameLogic {
 		}System.out.println();
 	}
 	
-	// 제목 출력하기
+	// 구분자로 강조하는 문장 출력하기
 	public static void printHeading(String title) {
 		printSeperator(30);
 		System.out.println(title);
@@ -94,7 +94,7 @@ public class GameLogic {
 		scan.next();
 	}
 	
-	//게임 시작 메소드
+	//게임 시작 메소드. Main 클래스의 메인 함수에 포함되는 유일한 메소드로, GameLoop 메소드를 포함했기 때문에 모든 클래스의 메소드들을 제어하게 됩니다.
 	public static void startGame() {
 		boolean nameSet = false;
 		//제목 화면 출력
@@ -123,7 +123,7 @@ public class GameLogic {
 		}while(!nameSet);
 		
 		// 스토리 인트로 출력
-		// 올 스킵
+		// 스토리를 전부 스킵할 수 있습니다.
 		int skip=readInt("시나리오 1e까지 모두 스킵하시겠습니까?\n(1)예\n(2)아니오",2);
 		if(skip==2) {
 			int input=readInt("프롤로그 스토리를 스킵하시겠습니까?\n(1)예\n(2)아니오",2);
@@ -132,13 +132,14 @@ public class GameLogic {
 			}
 		}
 				
-		//해당 이름의 새 플레이어 객체 생성
+		//해당 이름의 새 플레이어 객체 생성. make_player_preset은 Player 클래스에 있는 메소드로, 시작 능력치를 미리 설정해둔 객체 배열입니다.
+		//추후 업데이트로 플레이어블 캐릭터를 늘릴 것을 염두해두고 만들었습니다.
 		Player.Make_Player_Preset();
 		player=new Player(name,Player.playerSet[0].lv,Player.playerSet[0].maxhp,Player.playerSet[0].maxmp,
 				Player.playerSet[0].atk,Player.playerSet[0].intel,Player.playerSet[0].spd,
 				Player.playerSet[0].pdef,Player.playerSet[0].mdef,Player.playerSet[0].xp);
 		
-		//스킬 배열, 적 스텟 증가율 배열, 적 배열, 장소 배열 등 생성
+		//스킬 배열, 적 스텟 증가율 배열, 적 배열, 장소 배열 등 필수적인 배열들을 생성하는 메소드
 		Skill.Make_Skill_List();
 		Enemy.Make_EnemySR_List();
 		Enemy.Make_Enemy_List();
