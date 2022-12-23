@@ -2,19 +2,20 @@ package MainPackage;
 import java.util.Scanner;
 
 public class GameLogic {
+	//주로 사용되는 스캐너입니다.
 	static Scanner scan=new Scanner(System.in);
+	//공백을 포함한 문자열을 입력받기 위해 만든 두 번째 스캐너로, 이름을 입력받을 때 한 번 사용합니다.
 	static Scanner scan2=new Scanner(System.in);
-	
+	//플레이어 객체 생성
 	static Player player;
-	
+	//게임이 지속적으로 동작하도록 하는 gameLoop 메소드의 while문 동작여부를 결정하는 boolean 변수입니다.
 	public static boolean isRunning;
 	
 	//랜덤 인카운터; 랜덤 40%, 상점 10%, 휴식 10%, 서브 스토리 10%, 메인 시나리오 10%
 	public static String[] encounters= {"랜덤","랜덤","랜덤","랜덤","상점","상점","휴식","서브","서브","메인"};
-	//현 상황에 대한 설명을 문자형 변수로 선언
-		
-	//스토리 요소
-	public static int place=0, act=1;
+	
+	//스토리 진행 변수 act. 현재는 사용되지 않는 더미 데이터로, 추후 업데이트에 사용될 예정입니다.
+	public static int act=1;
 	
 	//Player 클래스로 리스트 번호를 전달하는 변수
 	static int inputToPC;
@@ -29,9 +30,9 @@ public class GameLogic {
 	private static String name;
 	
 	//버프 및 디버프 변수. 일단은 플레이어 전용으로 구현.
-	//여신의 축복
+	//여신의 축복 적용 여부; 0=적용되지 않음; 1=적용됨
 	public static int blessed=0;
-	//여신의 축복
+	//여신의 축복. 플레이어의 스텟을 곱연산으로 (10%)증가시킴.
 	public static void Blessing() {
 		blessed=1;
 		player.atk*=1.1;
@@ -50,14 +51,14 @@ public class GameLogic {
 		blessed=0;
 	}
 	
-	
-	//유저 입력을 콘솔에서 받기 위한 메소드
+	//유저 입력을 콘솔에서 받기 위한 메소드. 모든 메소드에서 사용되며, 잘못된 입력 예외를 자체적으로 처리하고 다시 입력받는 기능을 가졌습니다.
 	public static int readInt(String prompt,int userChoices) {
 		int input;
 		do{
 			System.out.println(prompt);
+			//Integer.parseInt는 문자형 숫자를 정수형으로 변환시킴. 이렇게 하면 굳이 misinput예외처리를 할 필요가 없어짐.
 			try {
-				input=Integer.parseInt(scan.next());	//Integer.parseInt는 문자형 숫자를 정수형으로 변환시킴. 이렇게 하면 굳이 misinput예외처리를 할 필요가 없어짐.
+				input=Integer.parseInt(scan.next());	
 			}catch(Exception e) {
 				input= -1;
 				System.out.println("정수를 입력하세요");
