@@ -348,6 +348,7 @@ public class Place {
 						}else if(input==2){
 							//show player item
 							System.out.println("미구현");
+							GameLogic.anythingToContinue();
 							shopset=false;
 						}else if(input==3) {
 							shopset=false;

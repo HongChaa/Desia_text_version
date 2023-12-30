@@ -174,7 +174,7 @@ public class Consumable extends Item {
 		}
 	}
 	//소모품 배열. 인덱스 역할.
-	static Consumable[]consumableList=new Consumable[21];
+	static Consumable[]consumableList=new Consumable[11];
 	public static void Make_Consumable_List() {
 		//아이템명,유형,xp,lv,	체력,최대체력,마나,최대마나,	물리방어력,마법저항력,공격력,주문력,스피드, 	구매가,판매가,보유수,아이템 넘버,정보
 		consumableList[0]=new Consumable("개발자용 소모품","디버깅 데이터",0,0, 10000,0,0,0, 0,0,0,0,0, 0,0,0,0,"개발자는 체력이 중요합니다.");
@@ -190,7 +190,7 @@ public class Consumable extends Item {
 		consumableList[8]=new Consumable("트리얼 고대사","능력치 변화",0,0, 0,0,0,0, 0,0,0,1,0, 0,0,0,8,"트리얼 왕국의 역사서. 고대의 역사를 다루고 있다.");
 		consumableList[9]=new Consumable("쿠룰렌타 구이","능력치 변화",0,0, 100,10,20,5, 0,0,0,0,1, 3500,3000,0,9,"극지방의 빙상 근처에서만 서식하는 쿠룰렌타 요리. 굉장히 귀한 음식으로, 임금님도 먹는 보양식이라고 한다.");
 		consumableList[10]=new Consumable("이상한사탕","능력치 변화",0,1, 0,0,0,0, 0,0,0,0,0, 70000,50000,0,10,"먹으면 왠지 강해질 것 같은 사탕이다. 아무튼 그렇다.");
-		
+		/*
 		consumableList[11]=new Consumable("","",0,0, 0,0,0,0, 0,0,0,0,0, 0,0,0,11,"");
 		consumableList[12]=new Consumable("","",0,0, 0,0,0,0, 0,0,0,0,0, 0,0,0,12,"");
 		consumableList[13]=new Consumable("","",0,0, 0,0,0,0, 0,0,0,0,0, 0,0,0,13,"");
@@ -202,6 +202,7 @@ public class Consumable extends Item {
 		consumableList[18]=new Consumable("","",0,0, 0,0,0,0, 0,0,0,0,0, 0,0,0,18,"");
 		consumableList[19]=new Consumable("","",0,0, 0,0,0,0, 0,0,0,0,0, 0,0,0,19,"");
 		consumableList[20]=new Consumable("","",0,0, 0,0,0,0, 0,0,0,0,0, 0,0,0,20,"");
+		*/
 	}
 
 }

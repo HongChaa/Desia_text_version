@@ -14,7 +14,7 @@ public class GameLogic {
 	//현 상황에 대한 설명을 문자형 변수로 선언
 		
 	//스토리 요소
-	public static int place=0, act=1;
+	public static int act=1;
 	
 	//Player 클래스로 리스트 번호를 전달하는 변수
 	static int inputToPC;
@@ -147,6 +147,11 @@ public class GameLogic {
 		Equipment.Make_Equipment_List();
 		Quest.Make_Quest_List();
 		
+		Skill.getSkill("파이어 볼");
+		Skill.getSkill("파이어 애로우");
+		Skill.getSkill("라이징 플레어");
+		player.gold+=10000;
+		
 		// 시나리오 1 출력
 		if (skip==2) {
 			int inputa=readInt("시나리오 1을 스킵하시겠습니까?\n(1)예\n(2)아니오",2);
@@ -240,7 +245,6 @@ public class GameLogic {
 		if(player.xp>=player.maxxp && act==1) {
 			//act와 장소 값 증가
 			act=2;
-			place=1;
 			//스토리
 			//레벨업
 			System.out.println("레벨 업 했습니다!");
@@ -400,7 +404,7 @@ public class GameLogic {
 					clearConsole();
 					printHeading("\t<소모품>");
 					Consumable.DisplayConsum();
-					input=readInt(">>>",(Consumable.css+1));
+					input=readInt("돌아가려면 "+(Consumable.css+1)+"입력)>>>",(Consumable.css+1));
 					if(input==(Consumable.css+1)) {
 						coninfo=false;
 					}else {
@@ -443,7 +447,7 @@ public class GameLogic {
 								}else if(input==2) {
 									itemuse=false;
 								}
-							}
+							}anythingToContinue();itemuse=false;
 						}while(itemuse);
 					}
 				}while(coninfo);
@@ -566,8 +570,7 @@ public class GameLogic {
 		Enemy.SetEnemySkill();
 		/*for(int i=0;i<Skill.esks;i++) {
 			System.out.println(Skill.Enemyskills.get(i).skillname);
-		}
-		//극적인, 감격스런 디버깅과 성공...궁극의 쾌감.*/
+		}*/
 		//CheckHp 메소드로 적 객체의 정보를 넘겨주기 위한 변수
 		battleLooprun=1;
 		//메인 전투 루프
@@ -582,28 +585,37 @@ public class GameLogic {
 			+"\tMP: "+Math.round(player.mp*10)/10.0+"/"+Math.round(player.maxmp*10)/10.0);
 			System.out.println("무엇을 할까?");
 			printSeperator(20);
+			System.out.println(Skill.esks+"(적 보유 스킬 수)");
 			
 			//적의 행동을 미리 결정(기본 공격, 스킬 공격)
-			//스킬 시전하기에 충분한 마나가 있는지 체크.
-			for(int h=0;h<Skill.esks;h++) {
-				//시전 가능한 스킬이 있는가?
-				if(Skill.Enemyskills.get(h).conmp<=enemy.mp) {
-					ATC=true;
-					break;
-				}else {ATC=false; continue;}
-			}//적이 하나 이상의 스킬을 보유했고, 시전 가능한 스킬이 있는 경우, 90%의 확률로 스킬 공격. 그 외 10%는 기본 공격.
+			//시전 가능한 스킬이 있는가?
+			//없는 경우
+			if(Skill.Enemyskills.size()==0) {
+				ATC=false;
+			//있는 경우	
+			}else {
+				//스킬 시전하기에 충분한 마나가 있는지 체크.
+				for(int h=0;h<Skill.esks;h++) {
+					if(Skill.Enemyskills.get(h).conmp<=enemy.mp) {
+						ATC=true;
+						break;
+					}else {ATC=false; continue;}
+				}
+			}
+			//적이 하나 이상의 스킬을 보유했고, 시전 가능한 스킬이 있는 경우, 90%의 확률로 스킬 공격. 그 외 10%는 기본 공격.
 			if(Skill.esks!=0 && ATC && (int)(Math.random()*100 + 1)>10) {
 				//사용 가능한 스킬 중 하나를 무작위로 시전한다
 				while(true) {
+					//보유한 스킬을 랜덤으로 선택 후, 해당 스킬의 마나 소모량만큼의 마나가 있을 경우 스킬 시전, 그렇지 않을 경우 다시 랜덤 선택.
 					int p=(int)(Math.random()*Skill.esks);
 					if(Skill.Enemyskills.get(p).conmp<=enemy.mp) {
 						ESLN=p;
 						break;
 					}else {continue;}
 				}
-				EACS=true;//적이 실제로 스킬을 사용함
+				EACS=true;//Enemy Actually Casted Skill 적이 실제로 스킬을 사용함
 				Edmg=tmpE.skillAtk();
-			}else {EACS=false; Edmg=tmpE.attack();}
+			}else {EACS=false; Edmg=tmpE.attack();}	//사용 안 함. [적의 데미지=기본 공격 데미지]로 설정.
 			
 			System.out.println("(1)싸운다\n(2)아이템 사용\n(3)도망치기");
 			int input=readInt(">>>",3);
@@ -634,7 +646,7 @@ public class GameLogic {
 							}else if(Skill.Enemyskills.get(ESLN).type=="마법"){
 								if(player.mdef>=0) {
 									dmgTook = Edmg*player.Mdefp();
-									System.out.println(Edmg+" "+player.Mdefp()+" "+dmgTook);
+									System.out.println(Edmg+" "+player.Mdefp()+" "+dmgTook+"계산 전 데미지, 플레이어 마법 저항력, 실제 받은 데미지");
 								}else if(player.mdef<0) {
 									dmgTook = Edmg*player.Mdefn();
 								}
@@ -754,17 +766,19 @@ public class GameLogic {
 									}
 								}
 								//적의 공격
-								if(Skill.Enemyskills.get(ESLN).type=="물리") {
-									if(player.pdef>=0) {
-										dmgTook = Edmg*player.Pdefp();
-									}else if(player.pdef<0) {
-										dmgTook = Edmg*player.Pdefn();
-									}
-								}else if(Skill.Enemyskills.get(ESLN).type=="마법"){
-									if(player.mdef>=0) {
-										dmgTook = Edmg*player.Mdefp();
-									}else if(player.mdef<0) {
-										dmgTook = Edmg*player.Mdefn();
+								if(EACS) {
+									if(Skill.Enemyskills.get(ESLN).type=="물리") {
+										if(player.pdef>=0) {
+											dmgTook = Edmg*player.Pdefp();
+										}else if(player.pdef<0) {
+											dmgTook = Edmg*player.Pdefn();
+										}
+									}else if(Skill.Enemyskills.get(ESLN).type=="마법"){
+										if(player.mdef>=0) {
+											dmgTook = Edmg*player.Mdefp();
+										}else if(player.mdef<0) {
+											dmgTook = Edmg*player.Mdefn();
+										}
 									}
 								}else {
 									if(player.pdef>=0) {
@@ -960,9 +974,10 @@ public class GameLogic {
 				//도망치기
 				clearConsole();
 				//플레이어가 마지막 act(최종 전투)에 있는지 체크하기, 상대의 스피드 이상인지 확인하기
-				if(player.spd>=enemy.spd) {	//[추가 바람]이건 나중에 상황(스토리 진행에 필수라거나)에 따라 도주하지 못하게 하는 코드로 재작성하자.
+				//[추가 바람]이건 나중에 상황(스토리 진행에 필수라거나)에 따라 도주하지 못하게 하는 코드로 재작성하자.
+				if(player.spd>=enemy.spd) {	
 				// 적과의 스피드 스텟 차이에 비례하는 확률로 도주 성공
-					if((Math.random()*1)>=0.1+((player.spd-enemy.spd)/50)) {	//난수 0~0.99; > 기본 도주 보정 상수+(플레이어와 적 스피드 차이)/50
+					if((Math.random()*1)>=0.1+((player.spd-enemy.spd)/50)) {	//난수 [0 ~ 0.99] > 기본 도주 보정 상수+(플레이어와 적 스피드 차이)/50
 						//스피드 차이가 45 이상일 때 100% 도주 성공
 						printHeading(enemy.name+"(으)로부터 무사히 도망쳤습니다!");
 						anythingToContinue();
@@ -999,10 +1014,36 @@ public class GameLogic {
 						CheckHp();
 					}
 				}else {
-					printHeading("적에게서 벗어날 수 없는 상황입니다. 여기서 반드시 결착을 지어야 합니다!");
-					anythingToContinue();
+					printHeading(enemy.name+"은(는) 끈질기게 당신을 추격합니다!");
+					if(EACS) {
+					if(Skill.Enemyskills.get(ESLN).type=="물리") {
+						if(player.pdef>=0) {
+							dmgTook = Edmg*player.Pdefp();
+						}else if(player.pdef<0) {
+							dmgTook = Edmg*player.Pdefn();
+						}
+					}else if(Skill.Enemyskills.get(ESLN).type=="마법"){
+						if(player.mdef>=0) {
+							dmgTook = Edmg*player.Mdefp();
+						}else if(player.mdef<0) {
+							dmgTook = Edmg*player.Mdefn();
+						}
+					}
+				}else {
+					if(player.pdef>=0) {
+						dmgTook = Edmg*player.Pdefp();
+					}else if(player.pdef<0) {
+						dmgTook = Edmg*player.Pdefn();
+					}
 				}
-						
+				//데미지 수치 적용(HP 변동)
+				player.hp-=dmgTook;
+				if(EACS) {
+					System.out.println(enemy.name+"은(는) "+Skill.Enemyskills.get(ESLN).skillname+"을(를) 시전했다!");}
+				System.out.println(enemy.name+"의 공격으로 "+Math.round(dmgTook*10)/10.0+"의 피해를 입었습니다.");
+				anythingToContinue();
+				CheckHp();
+				}
 			}
 			}while(!battleSet0);
 		}
